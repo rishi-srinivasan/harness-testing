@@ -1,0 +1,56 @@
+[
+  {
+    "id": "ipv6-partition",
+    "issue_number": 6093,
+    "issue": "https://github.com/pallets/flask/issues/6093",
+    "reference_pr": 6096,
+    "base": "514fc6b3e8402e4c646d5284e97a4f0ab50a7c4b",
+    "fixed": "05e9c6bd630ecf4ec0ec884b1fc7901663737bc7",
+    "difficulty": "small"
+  },
+  {
+    "id": "server-name-routing",
+    "issue_number": 5553,
+    "issue": "https://github.com/pallets/flask/issues/5553",
+    "reference_pr": 5634,
+    "base": "07c7d5730a2685ef2281cc635e289685e5c3d478",
+    "fixed": "10bdf61a0f751f3cb000f8f8ac5ac5b4bb535677",
+    "difficulty": "larger"
+  },
+  {
+    "id": "blueprint-empty-name",
+    "issue_number": 5010,
+    "issue": "https://github.com/pallets/flask/issues/5010",
+    "reference_pr": 5014,
+    "base": "7ee9ceb71e868944a46e1ff00b506772a53a4f1d",
+    "fixed": "7ed89d3f9d2207c9a607f5dcdce106c0278e1332",
+    "difficulty": "small"
+  },
+  {
+    "id": "nested-blueprint-subdomain",
+    "issue_number": 4834,
+    "issue": "https://github.com/pallets/flask/issues/4834",
+    "reference_pr": 4935,
+    "base": "fa1ee7066807c21256e90089731c548b313394d2",
+    "fixed": "836866dc19218832cf02f8b04911060ac92bfc0b",
+    "difficulty": "medium"
+  },
+  {
+    "id": "appcontext-lifetime",
+    "issue_number": 2410,
+    "issue": "https://github.com/pallets/flask/issues/2410",
+    "reference_pr": 4647,
+    "base": "ae547270e935b08d4deada9e28b049ff53debefe",
+    "fixed": "cec5f74110a7369992be1651c24b695d9fe55ab3",
+    "difficulty": "larger"
+  },
+  {
+    "id": "automatic-options-override",
+    "issue_number": 5916,
+    "issue": "https://github.com/pallets/flask/issues/5916",
+    "reference_pr": 5917,
+    "base": "d3b78fd18a8d9e224cb9ef58a23cec9b1ffc9ce9",
+    "fixed": "12e95c93b488725f80753f34b2e0d24838ca4646",
+    "difficulty": "medium"
+  }
+]

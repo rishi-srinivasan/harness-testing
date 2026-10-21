@@ -1,0 +1,7 @@
+.cache/
+.idea/
+.DS_Store
+__pycache__/
+results/smoke/
+results/*/*/*/workspace/
+results/*/*/*/codex-home/

@@ -1,0 +1,1 @@
+{"task": "appcontext-lifetime", "model": "qwen25coder", "rep": 1, "status": "ok", "passed": false, "seconds": 11.7, "usage": {"input": 1521, "cached": 0, "output": 27}, "malformed": {"text_call": 1, "parse_error": 0, "rejected": 0, "any": true}}

@@ -1,0 +1,1 @@
+{"task": "server-name-routing", "model": "qwen3", "rep": 1, "status": "ok", "passed": false, "seconds": 260.7, "usage": {"input": 17012, "cached": 11412, "output": 4800}, "malformed": {"text_call": 0, "parse_error": 1, "rejected": 1, "any": true}}

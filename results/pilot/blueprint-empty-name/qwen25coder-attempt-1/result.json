@@ -1,0 +1,1 @@
+{"task": "blueprint-empty-name", "model": "qwen25coder", "rep": 1, "status": "ok", "passed": false, "seconds": 11.4, "usage": {"input": 1335, "cached": 0, "output": 57}, "malformed": {"text_call": 0, "parse_error": 0, "rejected": 0, "any": false}}

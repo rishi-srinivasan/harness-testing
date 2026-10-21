@@ -1,0 +1,14 @@
+/home/eval/venv/lib/python3.10/site-packages/_pytest/config/__init__.py:331: PluggyTeardownRaisedWarning: A plugin raised an exception during an old-style hookwrapper teardown.
+Plugin: helpconfig, Hook: pytest_cmdline_parse
+ConftestImportFailure: SyntaxError: invalid syntax (blueprints.py, line 40) (from /tmp/g/tests/conftest.py)
+For more information see https://pluggy.readthedocs.io/en/stable/api_reference.html#pluggy.PluggyTeardownRaisedWarning
+  config = pluginmanager.hook.pytest_cmdline_parse(
+ImportError while loading conftest '/tmp/g/tests/conftest.py'.
+tests/conftest.py:9: in <module>
+    from flask import Flask
+src/flask/__init__.py:5: in <module>
+    from .blueprints import Blueprint as Blueprint
+E     File "/tmp/g/src/flask/blueprints.py", line 40
+E       if not name:            raise ValueError("Blueprint name cannot be empty")
+E       ^^
+E   SyntaxError: invalid syntax

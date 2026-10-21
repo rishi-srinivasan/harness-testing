@@ -1,0 +1,1 @@
+{"task": "nested-blueprint-subdomain", "model": "qwen3", "rep": 1, "status": "ok", "passed": false, "seconds": 141.8, "usage": {"input": 1488, "cached": 0, "output": 2892}, "malformed": {"text_call": 0, "parse_error": 0, "rejected": 0, "any": false}}

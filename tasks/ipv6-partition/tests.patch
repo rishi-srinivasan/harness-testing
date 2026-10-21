@@ -1,0 +1,37 @@
+diff --git a/tests/test_basic.py b/tests/test_basic.py
+index 1d9d83f8..3d2f3baa 100644
+--- a/tests/test_basic.py
++++ b/tests/test_basic.py
+@@ -1910,6 +1910,7 @@ def test_run_server_port(monkeypatch, app):
+         ("localhost", 0, "localhost:8080", "localhost", 0),
+         (None, None, "localhost:8080", "localhost", 8080),
+         (None, None, "localhost:0", "localhost", 0),
++        (None, None, "[::1]:8080", "::1", 8080),
+     ),
+ )
+ def test_run_from_config(
+diff --git a/tests/test_testing.py b/tests/test_testing.py
+index c172f14d..4c014f2e 100644
+--- a/tests/test_testing.py
++++ b/tests/test_testing.py
+@@ -171,6 +171,20 @@ def test_session_transactions(app, client):
+             assert sess["foo"] == [42]
+ 
+ 
++def test_session_transaction_ipv6(app):
++    base_url = "http://[::1]:8000/"
++    client = app.test_client()
++
++    @app.get("/")
++    def index():
++        return str(flask.session.get("value"))
++
++    with client.session_transaction(base_url=base_url) as sess:
++        sess["value"] = 42
++
++    assert client.get("/", base_url=base_url).text == "42"
++
++
+ def test_session_transactions_no_null_sessions():
+     app = flask.Flask(__name__)
+ 

@@ -1,0 +1,1 @@
+{"task": "ipv6-partition", "model": "qwen25coder", "rep": 1, "status": "ok", "passed": false, "seconds": 12.4, "usage": {"input": 1468, "cached": 0, "output": 24}, "malformed": {"text_call": 1, "parse_error": 0, "rejected": 0, "any": true}}

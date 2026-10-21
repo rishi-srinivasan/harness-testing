@@ -1,0 +1,1 @@
+{"task": "ipv6-partition", "model": "qwen3", "rep": 1, "status": "ok", "passed": false, "seconds": 124.9, "usage": {"input": 3949, "cached": 1445, "output": 1887}, "malformed": {"text_call": 0, "parse_error": 0, "rejected": 1, "any": false}}
