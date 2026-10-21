@@ -1,5 +1,0 @@
-{"type":"thread.started","thread_id":"01a15efc-babd-73f0-8ff1-7dcfe77dec88"}
-{"type":"item.completed","item":{"id":"item_0","type":"error","message":"Model metadata for `qwen2.5-coder-7b-ctx32k` not found. Defaulting to fallback metadata; this can degrade performance and cause issues."}}
-{"type":"turn.started"}
-{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"{\"name\": \"exec_command\", \"arguments\": {\"cmd\": \"echo 'Fixing the Flask CLI context issue...'\"}}"}}
-{"type":"turn.completed","usage":{"input_tokens":1521,"cached_input_tokens":0,"cache_write_input_tokens":0,"output_tokens":27,"reasoning_output_tokens":0}}

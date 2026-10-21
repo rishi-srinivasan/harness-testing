@@ -28,7 +28,7 @@ def snapshot(rev, dest):
     sp.run(["tar", "-x", "-C", str(dest)], stdin=git.stdout, check=True)
 
 
-def dx(cname, script, timeout=900, user_env=True):
+def dx(cname, script, timeout=900):
     return sh(["docker", "exec", "-e", ENV, "-w", "/workspace", cname, "sh", "-c", script], timeout=timeout)
 
 
@@ -59,36 +59,41 @@ def grade(cname, t, patch):
     return r.returncode == 0, (r.stdout + r.stderr)[-3000:]
 
 
-def usage(events):
-    u = {"input": 0, "cached": 0, "output": 0}
-    for line in events.read_text().splitlines():
+def jsonl(path):
+    """Parsed lines of a JSONL file, skipping any that aren't JSON (codex also emits plain text)."""
+    for line in path.read_text().splitlines():
         try:
-            e = json.loads(line)
+            yield json.loads(line)
         except ValueError:
-            continue
+            pass
+
+
+def usage(events):
+    u = dict.fromkeys(("input", "cached", "output"), 0)
+    for e in jsonl(events):
         if e.get("type") == "turn.completed":
             x = e.get("usage") or {}
-            u["input"] += x.get("input_tokens", 0); u["cached"] += x.get("cached_input_tokens", 0)
-            u["output"] += x.get("output_tokens", 0)
+            for k, src in (("input", "input_tokens"), ("cached", "cached_input_tokens"), ("output", "output_tokens")):
+                u[k] += x.get(src, 0)
     return u
+
+
+def is_tool_call(text):
+    """True if a message body is itself a tool-call JSON (optionally code-fenced)."""
+    try:
+        j = json.loads(re.sub(r"^```(?:json)?|```$", "", text.strip(), flags=re.M).strip())
+    except ValueError:
+        return False
+    return isinstance(j, dict) and "name" in j and ("arguments" in j or "parameters" in j)
 
 
 def malformed(out):
     """Count tool-call failures. text_call: a reply that is itself a tool-call JSON (never executed);
     parse_error: Codex router could not parse/route a call; rejected: valid call refused by sandbox policy (not counted as malformed)."""
     n = dict(text_call=0, parse_error=0, rejected=0)
-    for line in (out / "events.jsonl").read_text().splitlines():
-        try:
-            it = json.loads(line).get("item") or {}
-        except ValueError:
-            continue
-        if it.get("type") == "agent_message":
-            t = re.sub(r"^```(?:json)?|```$", "", it.get("text", "").strip(), flags=re.M).strip()
-            try:
-                j = json.loads(t)
-                n["text_call"] += isinstance(j, dict) and "name" in j and ("arguments" in j or "parameters" in j)
-            except ValueError:
-                pass
+    for e in jsonl(out / "events.jsonl"):
+        it = e.get("item") or {}
+        n["text_call"] += it.get("type") == "agent_message" and is_tool_call(it.get("text", ""))
     for line in (out / "stderr.txt").read_text().splitlines():
         if "codex_core::tools" in line and "ERROR" in line:
             n["rejected" if "approval policy" in line else "parse_error"] += 1
@@ -151,22 +156,31 @@ def run(a):
                         f.write(json.dumps(row) + "\n")
 
 
+def med(xs):
+    return f"{st.median(xs):,.0f} ({min(xs):,.0f}-{max(xs):,.0f})" if xs else "n/a"
+
+
+def table(header, rows):
+    return ["| " + " | ".join(header) + " |", "|" + "---|" * len(header)] + ["| " + " | ".join(map(str, r)) + " |" for r in rows]
+
+
 def report(a):
-    rows = [json.loads(l) for l in (ROOT / "results" / a.run / "results.jsonl").read_text().splitlines()]
-    med = lambda xs: f"{st.median(xs):,.0f} ({min(xs):,.0f}-{max(xs):,.0f})" if xs else "n/a"
-    L = [f"# Report: {a.run}", "", "| Model | Passed | Time s | Input+output tokens | Runs w/ malformed calls | Rejected-by-policy runs | Timeouts/errors |", "|---|---|---|---|---|---|---|"]
-    for m in sorted({r["model"] for r in rows}):
+    rows = list(jsonl(ROOT / "results" / a.run / "results.jsonl"))
+    models, tasks_ = sorted({r["model"] for r in rows}), sorted({r["task"] for r in rows})
+    frac = lambda rs, f: f"{sum(map(f, rs))}/{len(rs)}"
+    mal = lambda r: r.get("malformed", {})  # pre-malformed-tracking rows have none
+    by_model = []
+    for m in models:
         rs = [r for r in rows if r["model"] == m]
-        L.append(f"| {m} | {sum(r['passed'] for r in rs)}/{len(rs)} | {med([r['seconds'] for r in rs if r['seconds']])} | "
-                 f"{med([r['usage']['input'] + r['usage']['output'] for r in rs if r['usage']])} | "
-                 f"{sum(r['malformed']['any'] for r in rs if 'malformed' in r)}/{len(rs)} | "
-                 f"{sum(r['malformed']['rejected'] > 0 for r in rs if 'malformed' in r)}/{len(rs)} | "
-                 f"{sum(r['status'] != 'ok' for r in rs)} |")
-    L += ["", "| Task | " + " | ".join(sorted({r['model'] for r in rows})) + " |", "|---|" + "---|" * len({r['model'] for r in rows})]
-    for t in sorted({r["task"] for r in rows}):
-        L.append(f"| {t} | " + " | ".join(
-            (lambda rs: f"{sum(r['passed'] for r in rs)}/{len(rs)}")([r for r in rows if r['task'] == t and r['model'] == m])
-            for m in sorted({r['model'] for r in rows})) + " |")
+        by_model.append([m, frac(rs, lambda r: r["passed"]), med([r["seconds"] for r in rs if r["seconds"]]),
+                         med([r["usage"]["input"] + r["usage"]["output"] for r in rs if r["usage"]]),
+                         frac(rs, lambda r: mal(r).get("any", 0)), frac(rs, lambda r: mal(r).get("rejected", 0) > 0),
+                         sum(r["status"] != "ok" for r in rs)])
+    by_task = [[t, *(frac(rs, lambda r: r["passed"]) for m in models
+                     for rs in [[r for r in rows if r["task"] == t and r["model"] == m]])] for t in tasks_]
+    L = [f"# Report: {a.run}", "",
+         *table(["Model", "Passed", "Time s", "Input+output tokens", "Runs w/ malformed calls", "Rejected-by-policy runs", "Timeouts/errors"], by_model),
+         "", *table(["Task", *models], by_task)]
     (ROOT / "results" / a.run / "report.md").write_text("\n".join(L) + "\n"); print("\n".join(L))
 
 

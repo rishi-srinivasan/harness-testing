@@ -1,3 +1,0 @@
-Reading additional input from stdin...
-2026-10-21T14:54:48.534440Z ERROR codex_core::tools::router: error=approval policy is Never; reject command — you cannot ask for escalated permissions if the approval policy is Never
-2026-10-21T14:55:25.899485Z ERROR codex_core::tools::router: error=`justification` requires an explicit `sandbox_permissions`; use `sandbox_permissions: "require_escalated"` for unsandboxed execution, or omit `justification`.
