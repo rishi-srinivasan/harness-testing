@@ -1,7 +1,12 @@
-.cache/
 .idea/
+.cache/
 .DS_Store
 __pycache__/
+.pytest_cache/
 results/smoke/
 results/*/*/*/workspace/
 results/*/*/*/codex-home/
+results/*/*/*/events.jsonl
+results/*/*/*/stderr.txt
+*.log
+.codex/

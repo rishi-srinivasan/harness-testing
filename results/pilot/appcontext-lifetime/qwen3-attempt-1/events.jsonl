@@ -1,3 +1,0 @@
-{"type":"thread.started","thread_id":"01a15efd-0460-7da1-84a1-136c768d2f5a"}
-{"type":"item.completed","item":{"id":"item_0","type":"error","message":"Model metadata for `qwen3-8b-ctx32k` not found. Defaulting to fallback metadata; this can degrade performance and cause issues."}}
-{"type":"turn.started"}
